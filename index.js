@@ -28,7 +28,7 @@ server.post('/api/users', (req, res) => {
     created_at,
     updated_at
   })
-    .then(user => {
+    .then(res => {
       res.status(201).json(res);
     })
     .catch(err => {
