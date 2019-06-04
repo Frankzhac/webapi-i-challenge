@@ -14,25 +14,51 @@ server.get('/', (req, res) => {
 // Endpoint starts below
 
 server.post('/api/users', (req, res) => {
-  const body = req.body;
-  const { name } = req.body;
-  if (!name) {
+  const { name, bio, created_at, updated_at } = req.body;
+  if (!name || !bio) {
     res.status(400).json({
       errorMessage: "Please provide name and bio for the user."
     });
   }
   // add/save new user in the db
-  db.add(body)
+
+  db.insert({
+    name,
+    bio,
+    created_at,
+    updated_at
+  })
     .then(user => {
-      res.status(201).json(user);
+      res.status(201).json(res);
     })
     .catch(err => {
+      // console.log(err);
       res.status(500).json({
         success: false,
-        error: "The users information could not be retrieved."
-      })
+        error: "There was an error while saving the user to the database"
+      });
+    });
+});
+
+
+server.get('/api/users', (req, res) => {
+  db.find()
+    .then(users => {
+      res.json({ users });
     })
+    .catch(err => {
+      // console.log(err);
+      res.status(500).json({
+        error: "The users information could not be retrieved."
+      });
+    });
+});
+
+server.get('/api/users/:id', (req, res) => {
+  db.find()
 })
+
+
 
 server.listen(port, () => {
   console.log(`Server is Running on http://localhost:${port}`)
