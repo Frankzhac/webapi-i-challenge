@@ -13,7 +13,7 @@ server.get('/', (req, res) => {
 
 // Endpoint starts below
 
-server.post('/api/users', (req, res) => {
+server.post('/api/users', async (req, res) => {
   const { name, bio, created_at, updated_at } = req.body;
   if (!name || !bio) {
     res.status(400).json({
@@ -28,16 +28,23 @@ server.post('/api/users', (req, res) => {
     created_at,
     updated_at
   })
-    .then(res => {
-      res.status(201).json(res);
-    })
-    .catch(err => {
-      // console.log(err);
-      res.status(500).json({
-        success: false,
-        error: "There was an error while saving the user to the database"
+      .then(response => {
+        res.status(201).json(response);
+      })
+      .catch(err => {
+        // console.log(err);
+        res.status(500).json({
+          success: false,
+          error: "There was an error while saving the user to the database",
+        });
       });
-    });
+  // try {
+  //   const users = await db.insert(req.body);
+  //   const newUsers = await db.find();
+  //   res.status(200).json(newUsers)
+  // } catch(err) {
+  //   console.log(err);
+  // }
 });
 
 
@@ -78,8 +85,8 @@ server.delete('/api/users/:id', (req, res) => {
   const { id } = req.params;
 
   db.remove(id)
-    .then(res => {
-      if (res === 0) {
+    .then(response => {
+      if (response === 0) {
         res.status(404).json({
           message: "The user with the specified ID does not exist."
         });
@@ -107,8 +114,8 @@ server.put('/api/users/:id', (req, res) => {
   }
 
   db.update(id, { name, bio })
-    .then(res => {
-      if (res == 0) {
+    .then(response => {
+      if (response == 0) {
         res.status(404).json({
           errorMessage: "Please provide name and bio for the user."
         })
